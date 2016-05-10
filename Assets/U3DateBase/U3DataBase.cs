@@ -54,6 +54,18 @@ public class U3Database
         return qry;
     }
 
+    public U3DBResultSet Select(string tabelName, string conditionFieldName, object conditionFieldValue)
+    {
+        string condition = string.Format("{0}={1}", conditionFieldName, conditionFieldValue);
+        return Select(tabelName, condition);
+    }
+
+    public U3DBResultSet Select(string tabelName, string condition)
+    {
+        string sql = string.Format("SELECT * FROM {0} WHERE {1}", tabelName, condition ?? "1=1");
+        return Select(sql);
+    }
+
     public U3DBResultSet Select(string sql)
     {
         U3DBLog.Log("Select " + sql);
@@ -85,8 +97,6 @@ public class U3Database
         string sql = string.Format("UPDATE {0} SET {1}={2} WHERE {3}", tabelName, fieldName, fieldValue, condition ?? "1=1");
         return Update(sql);
     }
-
-   
 
     public bool Update(string sql)
     {

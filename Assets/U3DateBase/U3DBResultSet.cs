@@ -27,7 +27,7 @@ public class U3DBResultSet
         {
             for (int i = 0; i < Reader.FieldCount; i++)
             {
-                Debug.Log(Reader.GetName(i) + " " + Reader.GetValue(i));
+                U3DBLog.Log("result:" + Reader.GetName(i) + " " + Reader.GetValue(i));
             }
         }
     }

@@ -13,9 +13,12 @@ public class Test : MonoBehaviour
         db.Update("Main", "Value", 5);
         db.Update("Main", "Value", 6, "ID=1");
         db.Update("Main", "Value", 9, "ID", 2);
-        U3DBResultSet result = db.Select("SELECT * FROM MAIN");
-        result.Show();
 
+        U3DBResultSet result = null;
+        result = db.Select("SELECT * FROM MAIN");
+        result.Show();
+        result = db.Select("Main", "ID", 1);
+        result.Show();
 
         db.BeginTransaction(delegate(ref bool rollback)
         {
