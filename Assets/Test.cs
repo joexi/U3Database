@@ -15,6 +15,13 @@ public class Test : MonoBehaviour
         db.Update("Main", "Value", 9, "ID", 2);
         U3DBResultSet result = db.Select("SELECT * FROM MAIN");
         result.Show();
+
+
+        db.BeginTransaction(delegate(ref bool rollback)
+        {
+            db.Update("Main", "Value", 0);
+            rollback = true;
+        });
     }
 	
     // Update is called once per frame

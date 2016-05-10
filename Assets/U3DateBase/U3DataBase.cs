@@ -9,6 +9,7 @@ using Mono.Data.Sqlite;
 public class U3Database
 {
     private SqliteConnection sqlConnection;
+    private SqliteTransaction sqlTrans;
     private string dataPath;
 
     public static U3Database DatabaseWithPath(string path)
@@ -46,12 +47,18 @@ public class U3Database
         return true;
     }
 
+    public SqliteCommand CreateCommand(string sql) {
+        SqliteCommand qry = sqlConnection.CreateCommand();
+        qry.CommandText = sql;
+        qry.Transaction = sqlTrans;
+        return qry;
+    }
+
     public U3DBResultSet Select(string sql)
     {
         U3DBLog.Log("Select " + sql);
 
-        SqliteCommand qry = sqlConnection.CreateCommand();
-        qry.CommandText = sql;
+        SqliteCommand qry = CreateCommand(sql);
         try
         {
             SqliteDataReader reader = qry.ExecuteReader();
@@ -79,11 +86,12 @@ public class U3Database
         return Update(sql);
     }
 
+   
+
     public bool Update(string sql)
     {
         U3DBLog.Log("Update " + sql);
-        SqliteCommand qry = sqlConnection.CreateCommand();
-        qry.CommandText = sql;
+        SqliteCommand qry = CreateCommand(sql);
         try
         {
             SqliteDataReader reader = qry.ExecuteReader();
@@ -99,8 +107,7 @@ public class U3Database
     public bool Delete(string sql)
     {
         U3DBLog.Log("Delete " + sql);
-        SqliteCommand qry = sqlConnection.CreateCommand();
-        qry.CommandText = sql;
+        SqliteCommand qry = CreateCommand(sql);
         try
         {
             SqliteDataReader reader = qry.ExecuteReader();
@@ -116,8 +123,7 @@ public class U3Database
     public bool Insert(string sql)
     {
         U3DBLog.Log("Insert " + sql);
-        SqliteCommand qry = sqlConnection.CreateCommand();
-        qry.CommandText = sql;
+        SqliteCommand qry = CreateCommand(sql);
         try
         {
             SqliteDataReader reader = qry.ExecuteReader();
@@ -133,5 +139,27 @@ public class U3Database
     public bool Execute(string sql)
     {
         return false;
+    }
+
+    public delegate void TransactionCallback(ref bool rollback);
+    public void BeginTransaction(TransactionCallback cb) {
+        U3DBLog.Log("beign transaction");
+        if (cb != null)
+        {
+            sqlTrans = sqlConnection.BeginTransaction();
+            bool rollback = false;
+            cb(ref rollback);
+            if (rollback)
+            {
+                sqlTrans.Rollback();
+                U3DBLog.Log("transaction rollback!");
+            }
+            else
+            {
+                sqlTrans.Commit();
+                U3DBLog.Log("transaction commit!");
+            }
+            sqlTrans = null;
+        }
     }
 }
