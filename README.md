@@ -8,13 +8,23 @@ A Unity3D/C# wrapper around SQLite
 	* Deserialize sql result into object
 
 ## HOW TO USE
-```
+### UPDATE
+``` c#
 U3Database db = U3Database.DatabaseWithPath(Application.dataPath + "/test.db");
 db.Open();
 db.Update("UPDATE Main SET Value=3 WHERE ID=1");
 db.Update("Main", "Value", 5);
 db.Update("Main", "Value", 6, "ID=1");
 db.Update("Main", "Value", 9, "ID", 2);
+```
+
+### TRANSACTION
+```c#
+db.BeginTransaction(delegate(ref bool rollback)
+{
+    db.Update("Main", "Value", 0);
+    rollback = true;
+});
 ```
 
 ## REQUIRE
