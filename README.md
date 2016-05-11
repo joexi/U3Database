@@ -27,6 +27,12 @@ result = db.Select("Main", "ID", 1);
 result.Show();
 ```
 
+### INSERT
+```c#
+db.Insert("Main", "Value", 888);
+db.Insert("Main", "Value", 999, "Description", "???");
+```
+
 ### TRANSACTION
 ```c#
 db.BeginTransaction(delegate(ref bool rollback)

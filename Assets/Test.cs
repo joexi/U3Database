@@ -20,6 +20,9 @@ public class Test : MonoBehaviour
         result = db.Select("Main", "ID", 1);
         result.Show();
 
+        db.Insert("Main", "Value", 888);
+        db.Insert("Main", "Value", 999, "Description", "???");
+
         db.BeginTransaction(delegate(ref bool rollback)
         {
             db.Update("Main", "Value", 0);

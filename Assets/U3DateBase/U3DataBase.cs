@@ -47,7 +47,8 @@ public class U3Database
         return true;
     }
 
-    public SqliteCommand CreateCommand(string sql) {
+    public SqliteCommand CreateCommand(string sql)
+    {
         SqliteCommand qry = sqlConnection.CreateCommand();
         qry.CommandText = sql;
         qry.Transaction = sqlTrans;
@@ -130,6 +131,59 @@ public class U3Database
         return true;
     }
 
+    public bool Insert(string tableName, string key1, object value1)
+    {
+        return Insert(tableName, key1, value1, null, null, null, null);
+    }
+
+    public bool Insert(string tableName, string key1, object value1, string key2, object value2)
+    {
+        return Insert(tableName, key1, value1, key2, value2, null, null);
+    }
+
+    public bool Insert(string tableName, string key1, object value1, string key2, object value2, string key3, object value3)
+    {
+        string key = combineKeys(key1, key2, key3);
+        string value = combineValues(value1, value2, value3);
+        string sql = string.Format("INSERT INTO {0} ({1}) VALUES ({2});", tableName, key, value);
+        return Insert(sql);
+    }
+
+    private string combineKeys(params string[] keys)
+    {
+        string result = string.Empty;
+        for (int i = 0; i < keys.Length; i++)
+        {
+            if (keys[i] != null)
+            {
+                result += (result.Length > 0 ? "," : "") + keys[i];
+            }
+        }
+        return result;
+    }
+
+    private string combineValues(params object[] values)
+    {
+        string result = string.Empty;
+        for (int i = 0; i < values.Length; i++)
+        {
+            if (values[i] != null)
+            {
+                result += (result.Length > 0 ? "," : "") + parseValue(values[i]);
+            }
+        }
+        return result;
+    }
+
+    private string parseValue(object value)
+    {
+        if (value is string)
+        {
+            return string.Format("\"{0}\"", value);
+        }
+        return value.ToString();
+    }
+
     public bool Insert(string sql)
     {
         U3DBLog.Log("Insert " + sql);
@@ -152,7 +206,9 @@ public class U3Database
     }
 
     public delegate void TransactionCallback(ref bool rollback);
-    public void BeginTransaction(TransactionCallback cb) {
+
+    public void BeginTransaction(TransactionCallback cb)
+    {
         U3DBLog.Log("beign transaction");
         if (cb != null)
         {
