@@ -8,9 +8,11 @@ using Mono.Data.Sqlite;
 
 public class U3Database
 {
+    public string dataPath;
+
     private SqliteConnection sqlConnection;
     private SqliteTransaction sqlTrans;
-    private string dataPath;
+
 
     private static Dictionary<string, U3Database> dbPool = new Dictionary<string, U3Database>();
     public static U3Database DatabaseWithPath(string path)
@@ -169,6 +171,7 @@ public class U3Database
         string sql = string.Format("INSERT INTO {0} ({1}) VALUES ({2});", tableName, key, value);
         return Insert(sql);
     }
+
 
     private string combineKeys(params string[] keys)
     {

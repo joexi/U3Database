@@ -30,6 +30,11 @@ public class Test : MonoBehaviour
         });
 
         db.Delete("Main", "Value", 5);
+
+        U3DBQueue queue = U3DBQueue.DatabaseWithPath(db.dataPath);
+        queue.Dispath(delegate(U3Database database) {
+            db.Update("Main", "Value", 10, "ID=1");
+        });
     }
 	
     // Update is called once per frame
