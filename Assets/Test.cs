@@ -28,6 +28,8 @@ public class Test : MonoBehaviour
             db.Update("Main", "Value", 0);
             rollback = true;
         });
+
+        db.Delete("Main", "Value", 5);
     }
 	
     // Update is called once per frame

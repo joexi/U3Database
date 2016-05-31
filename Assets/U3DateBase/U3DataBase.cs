@@ -12,10 +12,19 @@ public class U3Database
     private SqliteTransaction sqlTrans;
     private string dataPath;
 
+    private static Dictionary<string, U3Database> dbPool = new Dictionary<string, U3Database>();
     public static U3Database DatabaseWithPath(string path)
     {
-		
-        U3Database db = new U3Database(path);
+        U3Database db = null;
+        if (dbPool.ContainsKey(path))
+        {
+            db = dbPool[path];
+        }
+        else
+        {
+            db = new U3Database(path);
+            dbPool[path] = db;
+        }
         return db;
     }
 
@@ -86,6 +95,33 @@ public class U3Database
         return null;
     }
 
+    public bool Delete(string tableName, string conditionFieldName, object conditionFieldValue)
+    {
+        string condition = string.Format("{0}={1}", conditionFieldName, conditionFieldValue);
+        return Delete(tableName, condition);
+    }
+
+    public bool Delete(string tableName, string condition)
+    {
+        string sql = string.Format("DELETE FROM {0} WHERE {1}", tableName, condition);
+        return Delete(sql);
+    }
+
+    public bool Delete(string sql)
+    {
+        SqliteCommand qry = CreateCommand(sql);
+        try
+        {
+            SqliteDataReader reader = qry.ExecuteReader();
+            return true;
+        }
+        catch (Exception e)
+        {
+            U3DBLog.LogError(e.Message);
+            return false;
+        }
+        return false;
+    }
 
     public bool Update(string tabelName, string fieldName, object fieldValue, string conditionFieldName, object conditionFieldValue)
     {
@@ -115,21 +151,6 @@ public class U3Database
         return true;
     }
 
-    public bool Delete(string sql)
-    {
-        U3DBLog.Log("Delete " + sql);
-        SqliteCommand qry = CreateCommand(sql);
-        try
-        {
-            SqliteDataReader reader = qry.ExecuteReader();
-        }
-        catch (Exception e)
-        {
-            U3DBLog.LogError(e.Message);
-            return false;
-        }
-        return true;
-    }
 
     public bool Insert(string tableName, string key1, object value1)
     {
