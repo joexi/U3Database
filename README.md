@@ -6,6 +6,7 @@ A Unity3D/C# wrapper around SQLite
 * TODO
 	* Generate data template depend on sqlite table structure
 	* Deserialize sql result into object
+	* Excel support
 
 ## HOW TO USE
 ### UPDATE
