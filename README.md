@@ -3,6 +3,7 @@ A Unity3D/C# wrapper around SQLite
 
 ## PROVIDE
 * Read data from sqlite / Write data into sqlite
+* Transaction sql 
 * TODO
 	* Generate data template depend on sqlite table structure
 	* Deserialize sql result into object
